@@ -1,87 +1,47 @@
-# HSBC One Calculator
+# HSBC One Multi-Currency Balance Calculator
 
-A simple web calculator to help HSBC HK One account holders calculate how much they need to remit to meet the HKD $10,000 average balance requirement.
+这是基于公开项目 `MayHappybb/hsbc-one-calculator` 的二次开发版本，用于帮助 HSBC HK One / Premier 用户估算为了满足前三个完整历月平均「全面理财总值」要求，还需要补充多少港币等值资产。
 
-![Calculator Preview](./preview.png)
+## 主要改动
 
-## Background
+- 支持多币种汇款和支出记录：HKD、CNY、CNH、USD、AUD、EUR、GBP、JPY、SGD、CAD、NZD、CHF、MOP、TWD、THB、MYR。
+- 页面会调用 `https://open.er-api.com/v6/latest/HKD` 获取 HKD 基准汇率，并将外币金额折算成 HKD 后参与余额天数计算。
+- 若实时汇率刷新失败，会优先使用浏览器本地缓存的上一份汇率。
+- 每笔汇款/支出会即时显示折合 HKD 金额。
+- UI 配色从原版暖色调整为更清爽的绿色系。
+- 保留纯静态页面设计，无需后端，适合直接部署到 GitHub Pages。
 
-Non-Hong Kong ID holders who open an HSBC One account must maintain an average "全面理财总值" (Total Relationship Balance) of HKD $10,000 for the first 3 full calendar months. If not met, a monthly service fee of HKD $100 is charged.
+## 计算逻辑
 
-This tool helps you calculate exactly how much additional deposit is needed based on your remittance history.
+工具仍沿用原项目的余额天数逻辑：
 
-## Features
-
-- 📅 **Account Opening Date Input** - Specify when you opened your account
-- 💰 **Multiple Remittance Tracking** - Add all your deposits with dates and amounts
-- 📊 **Smart Calculation** - Automatically calculates:
-  - Assessment period (first 3 full calendar months)
-  - Current balance-days accumulated
-  - Required additional deposit amount
-  - Days remaining until assessment ends
-- 🎨 **Clean UI** - Claude-inspired minimal design, easy to use
-- 🔒 **Privacy First** - No registration, no data storage, everything runs locally
-
-## How to Use
-
-1. Open `index.html` in your browser
-2. Enter your account opening date
-3. Add your remittances (date + amount in HKD)
-4. Click "Calculate Requirements"
-5. See the required additional deposit to meet the HKD $10,000 average
-
-### Example
-
-If you opened your account on **Feb 23, 2026** and remitted **HKD $3,000** on **Mar 13, 2026**:
-
-- Assessment Period: Mar 1 - May 31, 2026 (92 days)
-- Current Balance-Days: 3,000 × 79 days = 237,000
-- Required Balance-Days: 10,000 × 92 = 920,000
-- **Additional Deposit Needed: ~HKD $8,645**
-
-## Calculation Logic
-
-The calculator uses the following formula:
-
-```
-Daily Average = Sum of (Balance × Days) / Total Days ≥ 10,000
+```text
+目标余额天数 = HKD 门槛金额 x 评估期总天数
+当前余额天数 = 每笔汇款折合 HKD 金额 x 对应贡献天数 - 每笔支出折合 HKD 金额 x 对应扣减天数
+还需余额天数 = 目标余额天数 - 当前余额天数
 ```
 
-Where:
-- **Assessment Period**: First 3 full calendar months after account opening
-- **Balance-Days**: Amount deposited × number of days it contributes to the period
-- **Target**: 10,000 HKD × total assessment days
+评估期从开户或转换账户后的首个完整历月开始，连续计算三个完整历月。
 
-## Requirements
+## 使用方式
 
-- Modern web browser (Chrome, Firefox, Safari, Edge)
-- No server required - runs entirely client-side
+1. 打开页面。
+2. 选择 HSBC One 或 HSBC Premier 门槛，也可以手动输入 HKD 门槛。
+3. 输入开户日期。
+4. 等待汇率自动加载，或点击「刷新汇率」。
+5. 添加汇款或支出，选择币种并输入金额。
+6. 点击「计算需求」查看一次性存款或每日存款建议。
 
-## Local Development
+## 本地运行
+
+这是一个单文件静态页面，可以直接打开 `index.html`，也可以启动一个本地静态服务器：
 
 ```bash
-# Clone the repository
-git clone https://github.com/mayhappy/hsbc-one-calculator.git
-
-# Navigate to project
-cd hsbc-one-calculator
-
-# Start local server (optional)
-python3 -m http.server 9090
-
-# Open http://localhost:9090
+python -m http.server 9090
 ```
 
-Or simply open `index.html` directly in your browser.
+然后访问 `http://localhost:9090`。
 
-## Disclaimer
+## 免责声明
 
-This calculator is for reference only. Please verify with HSBC for official requirements and fee structures. The developer is not responsible for any discrepancies or financial decisions made based on this tool.
-
-## License
-
-MIT License - Feel free to use and modify.
-
----
-
-Made with ❤️ for HSBC One account holders in Hong Kong.
+本工具仅供参考。汇率来自第三方公开接口，银行入账汇率、处理时点和 HSBC 记录中的「全面理财总值」可能与本工具估算不同。实际账户要求、费用和豁免规则请以 HSBC 官方说明为准。
