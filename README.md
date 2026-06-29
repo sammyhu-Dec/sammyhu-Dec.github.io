@@ -1,111 +1,68 @@
-# HSBC Multi-Currency Balance Calculator
+# sammyhu-Dec Tools
 
-HSBC 多币种余额计算器是一个静态网页工具，用于帮助 HSBC Hong Kong 客户估算在 HSBC One 或 HSBC Premier 账户规则下，为满足前三个完整历月平均「全面理财总值」（Total Relationship Balance, TRB）要求，还需要补充多少港币等值资产。
+这是一个通过 GitHub Pages 托管的个人工具站点，用来集中发布可以直接在浏览器中使用的静态网页工具。
 
 线上地址：
 
-- 根目录入口：https://sammyhu-dec.github.io/
-- 计算器页面：https://sammyhu-dec.github.io/hsbc-multi-currency-balance-calculator/
+- 站点首页：https://sammyhu-dec.github.io/
+- HSBC 多币种余额计算器：https://sammyhu-dec.github.io/tools/hsbc-multi-currency-balance-calculator/
 
-## 项目背景
+## 工具列表
 
-根据 HSBC Hong Kong 关于 HSBC One 账户低额结存服务费的说明，非香港身份证持有人若在 2026年1月1日或之后成功开立或转换至 HSBC One，账户过往连续三个月的平均「全面理财总值」通常需要维持在港币 10,000 元或以上，否则账户可能会在其后每月被收取港币 100 元低额结存服务费。
+### HSBC 多币种余额计算器
 
-「全面理财总值」不只是 HSBC One 单一账户的活期余额，可能包括：
+用于帮助 HSBC Hong Kong 客户估算在 HSBC One 或 HSBC Premier 账户规则下，为满足前三个完整历月平均「全面理财总值」（Total Relationship Balance, TRB）要求，还需要补充多少港币等值资产。
 
-- 存款，包括港元、人民币及外币
-- 投资产品市值，例如本地及海外证券、单位信托基金、债券、存款证等
-- 高息投资存款、结构投资存款内的存款额
-- 具储蓄或投资成分的人寿保险
-- 由 HSBC Hong Kong 管理的部分强积金及职业退休计划余额
-- 符合条件的个人账户及同名联名账户余额
+主要能力：
 
-实际纳入范围、处理时点和银行记录以 HSBC 官方说明及账户纪录为准。
-
-## 谁可能需要满足 HSBC One 余额要求
-
-通常需要重点关注的人群：
-
-- 非香港身份证持有人
-- 于 2026年1月1日或之后成功开立或转换至 HSBC One
-- 账户过去连续三个月平均「全面理财总值」低于港币 10,000 元
-
-通常可能属于豁免或不受影响的人群：
-
-- 使用香港身份证成功开立或转换至 HSBC One 的客户
-- 于 2026年1月1日之前已成功开立或转换至 HSBC One 的客户
-- 非香港身份证持有人已于 2025年12月31日或之前成功提交 HSBC One 账户申请，即使账户开立或转换日期因流程安排落在 2026年1月1日或之后
-
-本工具在计算前提供「适用性判断」，帮助用户先判断是否可能需要继续计算。
-
-## 收费示例
-
-HSBC 会计算客户在成功开立或转换至 HSBC One 账户后的首三个完整历月的「全面理财总值」。
-
-例如：若客户于 2026年1月15日成功开立或转换至 HSBC One 账户，评估期通常为 2026年2月至2026年4月。若这三个月的平均「全面理财总值」达到港币 10,000 元或以上，低额结存服务费通常会被豁免。否则，港币 100 元的低额结存服务费会由随后每月的第 4 个工作日从 HSBC One 账户中扣除，直至过去三个月平均「全面理财总值」达到要求为止。
-
-## 计算器功能
-
-- 适用性判断：香港身份证、开户/转换日期、申请提交日期
-- 支持 HSBC One 港币 10,000 元门槛
-- 支持 HSBC Premier 港币 1,000,000 元门槛
-- 支持手动输入其他港币门槛
-- 支持多币种汇款及支出记录
-- 自动获取实时汇率并折算为港币
-- 显示每笔交易的港币等值
-- 计算评估期、所需余额天数、当前余额天数和还需余额天数
+- 判断用户是否可能属于 HSBC One 低额结存服务费豁免或不受影响人群
+- 支持 HSBC One、HSBC Premier 和自定义港币门槛
+- 支持港币、人民币、美元、澳元、欧元等常见币种
+- 根据实时汇率将外币折算为港币参与估算
+- 支持汇款记录和支出记录
 - 输出一次性存款建议和每日存款计划
-- 支持下载结果图片
+- 支持下载计算结果图片
 
-## 支持币种
-
-当前支持以下币种：
-
-- HKD - 港币
-- CNY - 人民币
-- CNH - 离岸人民币
-- USD - 美元
-- AUD - 澳元
-- EUR - 欧元
-- GBP - 英镑
-- JPY - 日元
-- SGD - 新加坡元
-- CAD - 加元
-- NZD - 新西兰元
-- CHF - 瑞士法郎
-- MOP - 澳门元
-- TWD - 新台币
-- THB - 泰铢
-- MYR - 马来西亚林吉特
-
-汇率来源为 `https://open.er-api.com/v6/latest/HKD`。页面以 HKD 为基准获取汇率，再将外币金额折算为港币参与计算。若实时汇率暂时无法刷新，页面会优先使用浏览器缓存的上一份汇率。
-
-## 计算逻辑
-
-本工具使用「余额天数」方式进行估算：
-
-```text
-目标余额天数 = HKD 门槛金额 x 评估期总天数
-当前余额天数 = 每笔汇款折合 HKD 金额 x 对应贡献天数 - 每笔支出折合 HKD 金额 x 对应扣减天数
-还需余额天数 = 目标余额天数 - 当前余额天数
-```
-
-如果用户在评估期开始前已经存入资金，该笔金额会按完整评估期天数计算贡献；如果在评估期内才存入，则按从入账后到评估期结束的剩余天数计算贡献。支出记录会以同样方式扣减余额天数。
+工具说明文档位于 `tools/hsbc-multi-currency-balance-calculator/README.md`。
 
 ## 项目结构
 
 ```text
-/
-├── index.html
+sammyhu-Dec.github.io/
 ├── README.md
-├── HSBC_One_FAQ.pdf
-└── hsbc-multi-currency-balance-calculator/
-    └── index.html
+├── index.html
+├── assets/
+│   └── .gitkeep
+├── hsbc-multi-currency-balance-calculator/
+│   └── index.html
+└── tools/
+    └── hsbc-multi-currency-balance-calculator/
+        ├── index.html
+        ├── README.md
+        └── HSBC_One_FAQ.pdf
 ```
 
-根目录 `index.html` 是项目入口页，计算器位于 `hsbc-multi-currency-balance-calculator/` 子目录。
+说明：
 
-## 本地运行
+- `index.html` 是网站首页和工具导航页。
+- `assets/` 用于放置后续多个工具共用的静态资源。
+- `tools/` 是所有独立小工具的主目录。
+- `tools/hsbc-multi-currency-balance-calculator/` 是 HSBC 计算器工具目录。
+- `hsbc-multi-currency-balance-calculator/index.html` 仅用于旧链接跳转，主项目代码不再放在该目录。
+
+## 新增工具规范
+
+后续新增工具时，建议继续使用小写英文和连字符作为目录名，例如：
+
+```text
+tools/example-tool/
+├── index.html
+└── README.md
+```
+
+如果某个工具需要单独的 PDF、图片或数据文件，可以放在该工具目录下；如果多个工具都会复用同一份资源，再放入根目录的 `assets/`。
+
+## 本地预览
 
 这是一个纯静态网页项目，可以直接部署到 GitHub Pages。若要本地预览：
 
@@ -116,9 +73,14 @@ python -m http.server 9090
 然后访问：
 
 ```text
-http://localhost:9090/hsbc-multi-currency-balance-calculator/
+http://localhost:9090/
+http://localhost:9090/tools/hsbc-multi-currency-balance-calculator/
 ```
+
+## 部署
+
+仓库名为 `sammyhu-Dec.github.io`，提交到 `main` 分支后由 GitHub Pages 自动发布。
 
 ## 免责声明
 
-本工具为非官方参考工具，未使用 HSBC 官方 Logo 或品牌授权，不代表 HSBC 或任何关联机构。汇率来自第三方公开接口，银行实际入账汇率、资产计入范围、账户状态和费用规则可能与本工具估算不同。请以 HSBC 官方说明、账户月结单、HSBC HK App 及银行最终记录为准。
+本项目中的金融计算工具仅用于个人估算和信息整理，不构成银行、税务、法律、投资或财务建议。具体费用规则、账户状态、资产计入范围、汇率和扣费安排，请以 HSBC Hong Kong 官方说明、账户月结单、HSBC HK App 及银行最终记录为准。
