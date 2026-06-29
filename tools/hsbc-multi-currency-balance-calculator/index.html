@@ -49,17 +49,23 @@
             opacity: 1;
             transform: translateY(0);
         }
-        .remittance-item,
-        .withdrawal-item {
+        .remittance-item {
             transition: all 0.2s ease;
         }
         .remittance-item:hover {
             background-color: #F0FDFA;
         }
+        .withdrawal-item {
+            display: flex;
+            flex-direction: row;
+            gap: 8px;
+            flex-wrap: nowrap !important;
+            align-items: center;
+            transition: all 0.2s ease;
+        }
         .withdrawal-item:hover {
             background-color: #FFF1F2;
         }
-        .remittance-date, .remittance-amount, .remittance-currency,
         .withdrawal-date, .withdrawal-amount, .withdrawal-currency {
             height: 36px;
             min-height: 36px;
@@ -67,10 +73,11 @@
             box-sizing: border-box;
             width: 100%;
         }
-        .date-input {
-            font-variant-numeric: tabular-nums;
-            letter-spacing: 0;
-            white-space: nowrap;
+        .remittance-date, .remittance-amount, .remittance-currency {
+            height: 36px;
+            min-height: 36px;
+            font-size: 14px;
+            box-sizing: border-box;
         }
         .remittance-item, .withdrawal-item {
             display: grid;
@@ -93,47 +100,51 @@
             justify-content: flex-end;
             white-space: nowrap;
         }
+        /* Fix date input overflow on mobile */
+        input[type="date"] {
+            -webkit-appearance: none;
+            appearance: none;
+            min-width: 0;
+        }
+        input[type="date"]::-webkit-date-and-time-value {
+            text-align: left;
+        }
         @media (max-width: 640px) {
-            #openingDate,
-            #applicationDate {
+            #openingDate {
                 font-size: 14px;
                 max-width: 100%;
                 box-sizing: border-box;
                 width: 100%;
             }
-            .remittance-item, .withdrawal-item {
-                grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-                gap: 8px;
-                padding: 10px !important;
-            }
-            .remittance-date, .remittance-amount, .remittance-currency,
-            .withdrawal-date, .withdrawal-amount, .withdrawal-currency {
-                height: 36px !important;
-                min-height: 36px !important;
-                font-size: 13px;
+            input[type="date"] {
                 padding-left: 8px;
                 padding-right: 8px;
             }
-            .transaction-date-cell {
-                grid-column: 1;
+        }
+        @media (max-width: 480px) {
+            .remittance-item, .withdrawal-item {
+                grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 104px auto;
+                gap: 6px;
             }
-            .transaction-amount-cell {
-                grid-column: 2;
+            .remittance-date, .remittance-amount, .remittance-currency,
+            .withdrawal-date, .withdrawal-amount, .withdrawal-currency {
+                height: 32px !important;
+                min-height: 32px !important;
+                font-size: 13px;
+                padding-left: 6px;
+                padding-right: 6px;
             }
-            .transaction-currency-cell {
-                grid-column: 1;
+            .remittance-item, .withdrawal-item {
+                padding: 8px !important;
             }
             .converted-value {
-                grid-column: 2;
+                grid-column: 1 / -2;
                 justify-content: flex-start;
-                min-height: 36px;
-                overflow: hidden;
-                text-overflow: ellipsis;
+                min-height: 24px;
             }
-            .transaction-remove-btn {
-                grid-column: 2;
-                justify-self: end;
-                align-self: center;
+            .remittance-date, .withdrawal-date {
+                width: 100% !important;
+                min-width: 0 !important;
             }
         }
         /* Reduce card padding on mobile */
@@ -261,30 +272,20 @@
                 <div>
                     <label class="block text-sm font-medium text-claude-text mb-2" data-i18n="accountOpeningDate">开户/转换日期</label>
                     <input
-                        type="text"
+                        type="date"
                         id="openingDate"
-                        class="date-input input-focus-ring w-full px-4 py-3 rounded-xl border border-claude-border bg-white text-claude-text transition-all duration-200"
-                        inputmode="numeric"
-                        autocomplete="off"
-                        maxlength="10"
-                        placeholder="yyyy/mm/dd"
-                        oninput="handleDateInput(this); saveData(); updateEligibilityStatus()"
-                        onblur="normalizeDateField(this); saveData(); updateEligibilityStatus()"
+                        class="input-focus-ring w-full px-4 py-3 rounded-xl border border-claude-border bg-white text-claude-text transition-all duration-200"
+                        onchange="saveData(); updateEligibilityStatus()"
                     >
                     <p class="text-xs text-claude-text-muted mt-2" data-i18n="accountOpeningHint">您的评估期从该日期下个月的1号开始计算</p>
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-claude-text mb-2" data-i18n="applicationDate">申请提交日期</label>
                     <input
-                        type="text"
+                        type="date"
                         id="applicationDate"
-                        class="date-input input-focus-ring w-full px-4 py-3 rounded-xl border border-claude-border bg-white text-claude-text transition-all duration-200"
-                        inputmode="numeric"
-                        autocomplete="off"
-                        maxlength="10"
-                        placeholder="yyyy/mm/dd"
-                        oninput="handleDateInput(this); saveData(); updateEligibilityStatus()"
-                        onblur="normalizeDateField(this); saveData(); updateEligibilityStatus()"
+                        class="input-focus-ring w-full px-4 py-3 rounded-xl border border-claude-border bg-white text-claude-text transition-all duration-200"
+                        onchange="saveData(); updateEligibilityStatus()"
                     >
                     <p class="text-xs text-claude-text-muted mt-2" data-i18n="applicationDateHint">若 2025年12月31日或之前已成功提交申请，通常不受新规影响</p>
                 </div>
@@ -672,7 +673,6 @@
                 hkdEquivalent: "折合 {amount}",
                 currencyUnavailable: "{currency} 汇率暂不可用",
                 missingRateAlert: "部分币种汇率暂不可用，请先刷新汇率后再计算。",
-                invalidDateAlert: "请使用 yyyy/mm/dd 格式填写日期，例如 2026/06/23。",
                 remittanceHistory: "汇款记录",
                 addRemittance: "添加汇款",
                 noRemittances: "尚未添加汇款",
@@ -765,7 +765,6 @@
                 hkdEquivalent: "≈ {amount}",
                 currencyUnavailable: "{currency} rate unavailable",
                 missingRateAlert: "Some currency rates are unavailable. Please refresh rates before calculating.",
-                invalidDateAlert: "Please enter dates in yyyy/mm/dd format, for example 2026/06/23.",
                 remittanceHistory: "Remittance History",
                 addRemittance: "Add Remittance",
                 noRemittances: "No remittances added yet",
@@ -823,7 +822,6 @@
         let calculationResult = null;
         let requiredBalance = 10000;
         const EXCHANGE_API_URL = 'https://open.er-api.com/v6/latest/HKD';
-        const DATE_PLACEHOLDER = 'yyyy/mm/dd';
         const SUPPORTED_CURRENCIES = ['HKD', 'CNY', 'CNH', 'USD', 'AUD', 'EUR', 'GBP', 'JPY', 'SGD', 'CAD', 'NZD', 'CHF', 'MOP', 'TWD', 'THB', 'MYR'];
         const CURRENCY_LABELS = {
             HKD: { zh: '港币', en: 'Hong Kong Dollar' },
@@ -891,7 +889,7 @@
 
                 if (dateInput.value || amountInput.value) {
                     transactions.push({
-                        date: normalizeDateValue(dateInput.value),
+                        date: dateInput.value,
                         amount: amountInput.value,
                         currency: currencyInput.value || 'HKD'
                     });
@@ -915,10 +913,10 @@
             const data = JSON.parse(savedData);
 
             if (data.openingDate) {
-                document.getElementById('openingDate').value = normalizeDateValue(data.openingDate);
+                document.getElementById('openingDate').value = data.openingDate;
             }
             if (data.applicationDate) {
-                document.getElementById('applicationDate').value = normalizeDateValue(data.applicationDate);
+                document.getElementById('applicationDate').value = data.applicationDate;
             }
             if (data.hkidStatus) {
                 document.getElementById('hkidStatus').value = data.hkidStatus;
@@ -976,9 +974,6 @@
             document.querySelectorAll('.remittance-amount, .withdrawal-amount').forEach(input => {
                 input.placeholder = getTranslation('amountPlaceholder');
             });
-            document.querySelectorAll('.date-input').forEach(input => {
-                input.placeholder = DATE_PLACEHOLDER;
-            });
             refreshCurrencyLabels();
             updateExchangeRateStatus(exchangeRateMode);
             updateEligibilityStatus();
@@ -994,54 +989,10 @@
         }
 
         function parseLocalDate(value) {
-            const raw = String(value || '').trim();
-            if (!raw) return null;
-
-            let parts = null;
-            const compactMatch = raw.match(/^(\d{4})(\d{2})(\d{2})$/);
-            const separatedMatch = raw.match(/^(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})$/);
-
-            if (compactMatch) {
-                parts = compactMatch.slice(1).map(Number);
-            } else if (separatedMatch) {
-                parts = separatedMatch.slice(1).map(Number);
-            }
-
-            if (!parts) return null;
-
-            const [year, month, day] = parts;
-            const date = new Date(year, month - 1, day);
-            if (
-                date.getFullYear() !== year ||
-                date.getMonth() !== month - 1 ||
-                date.getDate() !== day
-            ) {
-                return null;
-            }
-            return date;
-        }
-
-        function formatDateForInput(date) {
-            const year = date.getFullYear();
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const day = String(date.getDate()).padStart(2, '0');
-            return `${year}/${month}/${day}`;
-        }
-
-        function normalizeDateValue(value) {
-            const date = parseLocalDate(value);
-            if (!date) return String(value || '').trim();
-            return formatDateForInput(date);
-        }
-
-        function normalizeDateField(input) {
-            input.value = normalizeDateValue(input.value);
-        }
-
-        function handleDateInput(input) {
-            if (/^\d{8}$/.test(input.value.trim())) {
-                input.value = normalizeDateValue(input.value);
-            }
+            if (!value) return null;
+            const parts = value.split('-').map(Number);
+            if (parts.length !== 3 || parts.some(Number.isNaN)) return null;
+            return new Date(parts[0], parts[1] - 1, parts[2]);
         }
 
         function isOnOrBefore(date, year, month, day) {
@@ -1325,36 +1276,23 @@
             }
         }
 
-        function escapeAttribute(value) {
-            return String(value ?? '')
-                .replace(/&/g, '&amp;')
-                .replace(/"/g, '&quot;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;');
-        }
-
         function createTransactionRow(type, id, data = {}) {
             const isRemittance = type === 'remittance';
             const removeFunction = isRemittance ? 'removeRemittance' : 'removeWithdrawal';
-            const dateValue = escapeAttribute(normalizeDateValue(data.date || ''));
-            const amountValue = escapeAttribute(data.amount || '');
+            const dateValue = (data.date || '').replace(/[^\d-]/g, '');
+            const amountValue = data.amount || '';
             const currencyValue = SUPPORTED_CURRENCIES.includes(data.currency) ? data.currency : 'HKD';
 
             return `
-                <div class="transaction-date-cell">
+                <div>
                     <input
-                        type="text"
-                        class="${type}-date date-input input-focus-ring w-full px-3 py-2 rounded-lg border border-claude-border bg-white text-sm text-claude-text transition-all duration-200"
-                        inputmode="numeric"
-                        autocomplete="off"
-                        maxlength="10"
-                        placeholder="${DATE_PLACEHOLDER}"
+                        type="date"
+                        class="${type}-date input-focus-ring w-full px-3 py-2 rounded-lg border border-claude-border bg-white text-sm text-claude-text transition-all duration-200"
                         value="${dateValue}"
-                        oninput="handleDateInput(this); saveData()"
-                        onblur="normalizeDateField(this); saveData(); updateConvertedAmounts()"
+                        onchange="saveData()"
                     >
                 </div>
-                <div class="transaction-amount-cell">
+                <div>
                     <input
                         type="number"
                         class="${type}-amount input-focus-ring w-full px-3 py-2 rounded-lg border border-claude-border bg-white text-sm text-claude-text transition-all duration-200"
@@ -1365,7 +1303,7 @@
                         oninput="saveData(); updateConvertedAmounts()"
                     >
                 </div>
-                <div class="transaction-currency-cell">
+                <div>
                     <select
                         class="${type}-currency input-focus-ring w-full px-2 py-2 rounded-lg border border-claude-border bg-white text-sm text-claude-text transition-all duration-200"
                         onchange="saveData(); updateConvertedAmounts()"
@@ -1376,7 +1314,7 @@
                 <p class="converted-value rounded-lg bg-white/70 px-2 text-xs font-medium text-claude-text-muted" data-converted-value>-</p>
                 <button
                     onclick="${removeFunction}(${id})"
-                    class="transaction-remove-btn flex-shrink-0 p-2 text-claude-text-muted hover:text-red-500 transition-colors rounded-lg hover:bg-red-50"
+                    class="flex-shrink-0 p-2 text-claude-text-muted hover:text-red-500 transition-colors rounded-lg hover:bg-red-50"
                     aria-label="Remove"
                 >
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1459,11 +1397,7 @@
                 return;
             }
 
-            const openingDate = parseLocalDate(openingDateInput);
-            if (!openingDate) {
-                alert(getTranslation('invalidDateAlert'));
-                return;
-            }
+            const openingDate = new Date(openingDateInput);
             const assessmentStart = new Date(openingDate.getFullYear(), openingDate.getMonth() + 1, 1);
             const assessmentEnd = new Date(assessmentStart.getFullYear(), assessmentStart.getMonth() + 3, 0);
 
@@ -1474,7 +1408,6 @@
             const remittanceItems = document.querySelectorAll('.remittance-item');
             let currentBalanceDays = 0;
             let hasMissingRate = false;
-            let hasInvalidDate = false;
             const today = new Date();
             today.setHours(0, 0, 0, 0);
 
@@ -1484,11 +1417,7 @@
                 const currencyInput = item.querySelector('.remittance-currency');
 
                 if (dateInput.value && amountInput.value) {
-                    const remitDate = parseLocalDate(dateInput.value);
-                    if (!remitDate) {
-                        hasInvalidDate = true;
-                        return;
-                    }
+                    const remitDate = new Date(dateInput.value);
                     const amount = parseFloat(amountInput.value);
                     const currency = currencyInput.value || 'HKD';
                     const amountHKD = convertToHKD(amount, currency);
@@ -1515,11 +1444,7 @@
                 const currencyInput = item.querySelector('.withdrawal-currency');
 
                 if (dateInput.value && amountInput.value) {
-                    const withdrawDate = parseLocalDate(dateInput.value);
-                    if (!withdrawDate) {
-                        hasInvalidDate = true;
-                        return;
-                    }
+                    const withdrawDate = new Date(dateInput.value);
                     const amount = parseFloat(amountInput.value);
                     const currency = currencyInput.value || 'HKD';
                     const amountHKD = convertToHKD(amount, currency);
@@ -1537,11 +1462,6 @@
                     }
                 }
             });
-
-            if (hasInvalidDate) {
-                alert(getTranslation('invalidDateAlert'));
-                return;
-            }
 
             if (hasMissingRate) {
                 alert(getTranslation('missingRateAlert'));
