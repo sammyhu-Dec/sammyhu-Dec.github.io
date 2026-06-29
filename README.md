@@ -33,8 +33,6 @@ sammyhu-Dec.github.io/
 ├── index.html
 ├── assets/
 │   └── .gitkeep
-├── hsbc-multi-currency-balance-calculator/
-│   └── index.html
 └── tools/
     └── hsbc-multi-currency-balance-calculator/
         ├── index.html
@@ -48,7 +46,6 @@ sammyhu-Dec.github.io/
 - `assets/` 用于放置后续多个工具共用的静态资源。
 - `tools/` 是所有独立小工具的主目录。
 - `tools/hsbc-multi-currency-balance-calculator/` 是 HSBC 计算器工具目录。
-- `hsbc-multi-currency-balance-calculator/index.html` 仅用于旧链接跳转，主项目代码不再放在该目录。
 
 ## 新增工具规范
 
